@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum RecommendationStatus {
+  TODO
+  DOING
+  DONE
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  name          String?
+  passwordHash  String
+  createdAt     DateTime  @default(now())
+  sites         Site[]
+}
+
+model Site {
+  id               Int               @id @default(autoincrement())
+  ownerId          Int
+  owner            User              @relation(fields: [ownerId], references: [id])
+  name             String
+  url              String
+  createdAt        DateTime          @default(now())
+  analyses         Analysis[]
+  recommendations  Recommendation[]
+
+  @@unique([ownerId, url])
+}
+
+model Analysis {
+  id         Int      @id @default(autoincrement())
+  siteId     Int
+  site       Site     @relation(fields: [siteId], references: [id])
+  createdAt  DateTime @default(now())
+  geoScore   Int
+  details    Json
+  recommendations Recommendation[]
+}
+
+model Recommendation {
+  id          Int                    @id @default(autoincrement())
+  siteId      Int
+  site        Site                   @relation(fields: [siteId], references: [id])
+  analysisId  Int?
+  analysis    Analysis?              @relation(fields: [analysisId], references: [id])
+  title       String
+  description String
+  status      RecommendationStatus   @default(TODO)
+  category    String?
+  createdAt   DateTime               @default(now())
+}
