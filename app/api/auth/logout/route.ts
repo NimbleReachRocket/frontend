@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { JWT_COOKIE } from "@/lib/auth";
 import { cookies } from "next/headers";
