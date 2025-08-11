@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const { name, url } = createSchema.parse(await request.json());
     const site = await prisma.site.create({ data: { name, url, ownerId: user.id } });
     return NextResponse.json(site);
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }

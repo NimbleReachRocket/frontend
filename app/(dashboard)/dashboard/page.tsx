@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
+import type { Site } from "@prisma/client";
 
-async function getData() {
+async function getData(): Promise<{ user: { id: number; email: string; name: string | null } | null; sites: Site[] }> {
   const user = await getSessionUser();
-  if (!user) return { user: null, sites: [] as any[] };
+  if (!user) return { user: null, sites: [] as Site[] };
   const sites = await prisma.site.findMany({ where: { ownerId: user.id }, orderBy: { createdAt: "desc" } });
   return { user, sites };
 }
